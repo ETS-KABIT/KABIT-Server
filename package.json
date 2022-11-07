@@ -1,0 +1,23 @@
+{
+  "name": "kabit-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/ETS-KABIT/KABIT-Server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ETS-KABIT/KABIT-Server/issues"
+  },
+  "homepage": "https://github.com/ETS-KABIT/KABIT-Server#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
