@@ -3,22 +3,59 @@ console.log("hello");
 const {readFile, readFileSync} = require('fs');
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const { request } = require('http');
+const { pathToFileURL } = require('url');
+const path = require('path');
+
 
 const app = express();
 
-app.get('/', (request, response) =>
-{
-    readFile('./home.html', 'utf8', (err, html) =>
-    {
-        if(err)
-        {
-            response.status(500).send('error, cant load html')
-        }
-        
-        response.send(html); 
+ 
+var jsonParser = bodyParser.json()
+ 
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-    })
+//temp shit hashing function, replace before final ver.
+function hashCode(s) {
+    var h = 0, l = s.length, i = 0;
+    if ( l > 0 )
+      while (i < l)
+        h = (h << 5) - h + s.charCodeAt(i++) | 0;
+    return h;
+};
+
+
+app.use(express.static('./KABIT-Client/'));
+
+
+
+app.post('/kontrola', urlencodedParser, (request, response) =>
+{
+    console.log("log-in request");
+
+    //add database credential search by username, and password hash check
+    //*temp. static values for testing
+    if(request.body.username == "hello" && hashCode(request.body.password) == "3329")
+    {
+        console.log("login suc");
+        readFile('./KABIT-Client/kontrola/index.html', 'utf-8', (err, html) =>
+        {
+            if(err) response.send(err);
+            response.send(html);
+        });
+    }
+    else
+    {
+        console.log("login err");
+        readFile('./KABIT-Client/index.html', 'utf-8', (err, html) =>
+        {
+            if(err) response.send(err);
+            response.send(html);
+        });
+    }
 });
 
-app.listen(process.env.PORT || 80, () => console.log("Running on http://10.10.10.100:80"))
+app.listen(process.env.PORT || 80, () => console.log("Running on port 80"))
+
+

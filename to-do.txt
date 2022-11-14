@@ -1,0 +1,4 @@
+1. make db
+2. make a python script for quick db managment
+3. manage mqtt interactions through db with python script, or nodejs mqtt client 
+4. figure out how to dynamic values into webpage (prob. by not being a retard)

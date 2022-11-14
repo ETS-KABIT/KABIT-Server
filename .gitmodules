@@ -1,0 +1,3 @@
+[submodule "KABIT-Client"]
+	path = KABIT-Client
+	url = https://github.com/ETS-KABIT/KABIT-Client.git
