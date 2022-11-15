@@ -11,6 +11,8 @@ const path = require('path');
 
 const app = express();
 
+app.set("view engine", "ejs");
+
  
 var jsonParser = bodyParser.json()
  
@@ -27,7 +29,6 @@ function hashCode(s) {
 
 
 app.use(express.static('./KABIT-Client/'));
-
 
 
 app.post('/kontrola', urlencodedParser, (request, response) =>
@@ -55,6 +56,13 @@ app.post('/kontrola', urlencodedParser, (request, response) =>
         });
     }
 });
+
+
+app.get('/pregled', (request, response) =>
+{
+    response.render("pregled");
+});
+
 
 app.listen(process.env.PORT || 80, () => console.log("Running on port 80"))
 
