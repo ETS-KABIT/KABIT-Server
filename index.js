@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const { request } = require('http');
 const { pathToFileURL } = require('url');
 const path = require('path');
+const { response } = require('express');
 
 
 const app = express();
@@ -18,13 +19,22 @@ var jsonParser = bodyParser.json()
  
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-//temp shit hashing function, replace before final ver.
-function hashCode(s) {
-    var h = 0, l = s.length, i = 0;
-    if ( l > 0 )
-      while (i < l)
-        h = (h << 5) - h + s.charCodeAt(i++) | 0;
-    return h;
+//password hashing function
+function hashCode(str, seed = 0) 
+{
+    let h1 = 0xdeadbeef ^ seed,
+    h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) 
+    {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+  
+     h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
 
 
@@ -37,7 +47,7 @@ app.post('/kontrola', urlencodedParser, (request, response) =>
 
     //add database credential search by username, and password hash check
     //*temp. static values for testing
-    if(request.body.username == "hello" && hashCode(request.body.password) == "3329")
+    if(request.body.username == "hello" && hashCode(request.body.password) == 4295414792258359)
     {
         console.log("login suc");
         readFile('./KABIT-Client/kontrola/index.html', 'utf-8', (err, html) =>
@@ -64,6 +74,13 @@ app.get('/pregled', (request, response) =>
 });
 
 
-app.listen(process.env.PORT || 80, () => console.log("Running on port 80"))
+app.post('/kontrola/dnevna-soba', urlencodedParser, (request, response) =>
+{
+    console.log(request.body);
+});
+
+console.log(hashCode("hi"));
+
+app.listen(process.env.PORT || 80, () => console.log("Running on port 80"));
 
 
