@@ -197,7 +197,23 @@ app.get('/request/temp/prvi-sprat', urlencodedParser, (request, response) =>
     response.send(tempUp);
 });
 
-
+app.post('/kontrola/trenutna', jsonParser, (request, response) =>
+{
+    var floor = request.body["floor"];
+    var temp = String(request.body["temp"]);
+    switch (floor) {
+        case "prizemlje":
+            //client.publish("set-temp", temp);
+            console.log(temp);
+            break;
+        case "prvi-sprat":
+            //client.publish("set-temp", temp);
+            console.log(temp);
+            break;
+        default:
+            break;
+    }
+});
 
 app.listen(process.env.PORT || 80, () => console.log("Running on port 80"));
 
