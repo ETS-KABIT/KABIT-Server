@@ -12,12 +12,34 @@ const mqtt = require('mqtt');
 
 const app = express();
 
-const client = mqtt.connect("mqtt://10.6.60.51:1883");
+const client = mqtt.connect("mqtt://91.187.148.150:11883");
 
 client.on('connect', () =>
 {
     console.log("MQTT Client connected")
+    client.subscribe("dht-prizemlje");
+    client.subscribe("dht-spolja");
+});
 
+var tempUp
+var tempDown
+
+client.on('message', (topic, message) =>
+{
+    var s_topci = topic.toString();
+    var s_mess = message.toString();
+    switch (s_topci) {
+        case "dht-prizemlje":
+            tempDown = s_mess;
+            break;
+        case "dht-spolja":
+            tempUp = s_mess;
+            break;
+    
+        default:
+            console.log("xd");
+            break;
+    }
 });
 
 app.set("view engine", "ejs");
@@ -81,7 +103,7 @@ app.get('/pregled', (request, response) =>
     response.render("pregled");
 });
 
-
+/*
 app.post('/kontrola/dnevna-soba', jsonParser, (request, response) =>
 {
     console.log(request.body);
@@ -131,11 +153,51 @@ app.post('/kontrola/stepenice', urlencodedParser, (request, response) =>
     response.send("oksi");
 
 });
+*/
+
+app.post('/kontrola/rasveta', jsonParser, (request, response) =>
+{
+    var name = request.body["name"];
+    var value = request.body["value"];
+    console.log(name);
+    console.log(value);
+    switch (name) {
+        case "dnevna-soba":
+            client.publish("led-hodnik", String(value));
+            break;
+        case "kupatlo":
+            client.publish("led-kupatilo", String(value));
+            break;
+        case "hodnik":
+            client.publish("led-dnevna", String(value));
+            break;
+        case "stepenice":
+            client.publish("led-stepenice", String(value));
+            break;
+        case "soba-1":
+            client.publish("led-soba1", String(value));
+            break;
+        case "soba-2":
+            client.publish("led-soba2", String(value));
+            break;
+    
+        default:
+            console.log("rip");
+            break;
+    }
+});
 
 app.get('/request/temp/prizemlje', urlencodedParser, (request, response) =>
 {
-    response.send("hello");
+    response.send(tempDown); 
 });
+
+app.get('/request/temp/prvi-sprat', urlencodedParser, (request, response) =>
+{
+    response.send(tempUp);
+});
+
+
 
 app.listen(process.env.PORT || 80, () => console.log("Running on port 80"));
 
