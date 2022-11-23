@@ -8,9 +8,17 @@ const { request } = require('http');
 const { pathToFileURL } = require('url');
 const path = require('path');
 const { response } = require('express');
-
+const mqtt = require('mqtt');
 
 const app = express();
+
+const client = mqtt.connect("mqtt://10.6.60.51:1883");
+
+client.on('connect', () =>
+{
+    console.log("MQTT Client connected")
+
+});
 
 app.set("view engine", "ejs");
 
@@ -74,12 +82,60 @@ app.get('/pregled', (request, response) =>
 });
 
 
-app.post('/kontrola/dnevna-soba', urlencodedParser, (request, response) =>
+app.post('/kontrola/dnevna-soba', jsonParser, (request, response) =>
 {
     console.log(request.body);
+    console.log("hello");
+    client.publish('led-hodnik', request.body.slider);
+    response.send("oksi");
+
 });
 
-console.log(hashCode("hi"));
+
+app.post('/kontrola/hodnik', urlencodedParser, (request, response) =>
+{
+    console.log(request.body.slider);
+    client.publish('led-dnevna', request.body.slider);
+    response.send("oksi");
+
+});
+
+app.post('/kontrola/kupatlo', urlencodedParser, (request, response) =>
+{
+    console.log(request.body.slider);
+    client.publish('led-kupatilo', request.body.slider);
+    response.send("oksi");
+
+});
+
+app.post('/kontrola/soba-1', urlencodedParser, (request, response) =>
+{
+    console.log(request.body.slider);
+    client.publish('led-soba1', request.body.slider);
+    response.send("oksi");
+
+});
+
+app.post('/kontrola/soba-2', urlencodedParser, (request, response) =>
+{
+    console.log(request.body.slide);
+    client.publish('led-soba2', request.body.slider);
+    response.send("oksi");
+
+});
+
+app.post('/kontrola/stepenice', urlencodedParser, (request, response) =>
+{
+    console.log(request.body.slider);
+    client.publish('led-stepenice', request.body.slider);
+    response.send("oksi");
+
+});
+
+app.get('/request/temp/prizemlje', urlencodedParser, (request, response) =>
+{
+    response.send("hello");
+});
 
 app.listen(process.env.PORT || 80, () => console.log("Running on port 80"));
 
